@@ -1,4 +1,4 @@
-export const invoice = [
+const invoice = [
   {
     customer: 'BogCo',
     performance: [
@@ -17,3 +17,5 @@ export const invoice = [
     ]
   }
 ]
+
+exports.invoice = invoice

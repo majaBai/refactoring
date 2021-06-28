@@ -1,18 +1,19 @@
-import { plays } from "./play";
-import { invoice, invoice } from "./invoice";
+const { plays } = require("./play")
+const { invoice } = require("./invoice")
 
-const invoice = invoice[0]
-const plays = plays
+// const invoice = invoice[0]
+// const plays = plays
 
 function format (cur) {
   return new Intl.NumberFormat("en-US",{ style: "currency", currency: "USD",minimumFractionDigits: 2 }).format(cur);
 }
 function statement () {
+  console.log(invoice, plays)
   let totalAmount = 0;
   let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
+  let result = `Statement for ${invoice[0].customer}\n`;
 
-  for (let perf of invoice.performances) {
+  for (let perf of invoice[0].performance) {
     const play = plays[perf.playID];
     let thisAmount = 0;
 
@@ -48,7 +49,8 @@ function statement () {
   return result;
 }
 
-statement()
+const result = statement()
+console.log(result)
 
 /*
 Statement for BigCo

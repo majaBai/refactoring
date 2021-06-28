@@ -1,4 +1,4 @@
-export const plays = {
+const plays = {
   hamlet: {
     name: 'Halmnet',
     type: 'tragedy'
@@ -12,3 +12,5 @@ export const plays = {
     type: 'tragedy'
   }
 }
+
+exports.plays = plays
