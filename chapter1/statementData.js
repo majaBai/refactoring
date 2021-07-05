@@ -1,11 +1,65 @@
 const { plays } = require("./play")
 const { invoice } = require("./invoice")
 
+class PerformanceCalculator {
+  constructor(aPerformance, aPlay) {
+    this.performance = aPerformance
+    this.play = aPlay
+  }
+  get amount() {
+    throw new Error('subclass responsibility')
+  }
+  get volumeCredits() {
+    return Math.max(this.performance.audience - 30, 0);
+  }
+}
+
+class TragedyCaculator extends PerformanceCalculator {
+  get amount() {
+     let result = 40000;
+      if (this.performance.audience > 30) {
+        result += 1000 * (this.performance.audience - 30);
+      }
+      return result
+  }
+  get volumeCredits() {
+    return super.volumeCredits + Math.floor(this.performance.audience / 5);
+  }
+}
+
+class ComedyCaculator extends PerformanceCalculator {
+  get amount() {
+      let result = 30000;
+      if (this.performance.audience > 20) {
+        result += 10000 + 500 * (this.performance.audience - 20);
+      }
+      result += 300 * this.performance.audience;
+      return result
+ }
+}
+
+function createPerfarmanceCalculator(aPerformance, aPlay) {
+  // return new PerformanceCalculator(aPerformance, aPlay)
+  switch (aPlay.type){
+    case 'tragedy':
+      return new TragedyCaculator(aPerformance, aPlay);
+      break;
+    case 'comedy':
+      return new ComedyCaculator(aPerformance, aPlay);
+      break;
+    default:
+      throw new Error(`unkown type: ${aPlay.type}`)
+  }
+}
+
+
+
 function enrichPerformance(aPerformance) {
+  const calculator = createPerfarmanceCalculator(aPerformance, playForPerf(aPerformance))
   const result = Object.assign({}, aPerformance)
-  result.play = playForPerf(result)
-  result.amount = amountFor(result)
-  result.volumeCredits = volumeCreditsFor(result)
+  result.play = calculator.play
+  result.amount = calculator.amount
+  result.volumeCredits = calculator.volumeCredits
   return result
 }
 
@@ -16,35 +70,6 @@ function totalVolumeCredits(data) {
 function totalAmount(data) {
  return data.performance.reduce((total, p) => total + p.amount, 0)
 }
-
-function amountFor (perf) {
-  let thisAmount = 0
-  switch (playForPerf(perf).type) {
-    case "tragedy":
-      thisAmount = 40000;
-      if (perf.audience > 30) {
-        thisAmount += 1000 * (perf.audience - 30);
-      }
-      break;
-    case "comedy":
-      thisAmount = 30000;
-      if (perf.audience > 20) {
-        thisAmount += 10000 + 500 * (perf.audience - 20);
-      }
-      thisAmount += 300 * perf.audience;
-      break;
-    default:
-        throw new Error(`unknown type: ${playForPerf(perf).type}`);
-    }
-    return thisAmount
-}
-
-function volumeCreditsFor (perf) {
-  let result = Math.max(perf.audience - 30, 0);
-  if ("comedy" === playForPerf(perf).type) result += Math.floor(perf.audience / 5);
-  return result
-}
-
 
 function playForPerf (perf) {
   return plays[perf.playID]
