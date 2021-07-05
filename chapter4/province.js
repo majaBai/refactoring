@@ -1,3 +1,5 @@
+const { Producer } = require('./producer')
+
 class Province {
   constructor(doc) {
     this._name = doc.name;
@@ -54,6 +56,4 @@ class Province {
    }
 }
 
-exports = {
-  Province
-}
+exports.Province = Province

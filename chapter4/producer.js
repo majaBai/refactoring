@@ -18,5 +18,6 @@ class Producer {
     this._province.totalProduction += newProduction - this._production;
     this._production = newProduction;
   }
-
 }
+
+exports.Producer = Producer
