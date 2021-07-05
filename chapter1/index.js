@@ -51,15 +51,18 @@ function totalAmount() {
   }
   return total
 }
-
-function statement () {
-  let result = `Statement for ${invoice[0].customer}\n`;
-  for (let perf of invoice[0].performance) {
+function renderPlaintext (invoice) {
+  let result = `Statement for ${invoice.customer}\n`;
+  for (let perf of invoice.performance) {
     result += ` ${playForPerf(perf).name}: ${format(amountFor(perf))} (${perf.audience} seats)\n`
   }
   result += `Amount owed is ${format(totalAmount())}\n`;
   result += `You earned ${format(totalVolumeCredits())} credits\n`;
   return result;
+}
+function statement () {
+  const invo = invoice[0]
+  renderPlaintext()
 }
 
 const result = statement()
