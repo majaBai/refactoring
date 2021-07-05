@@ -1,72 +1,13 @@
-const { plays } = require("./play")
-const { invoice } = require("./invoice")
+const { createStatementData } = require("./statementData")
+const { renderPlaintext } = require("./render")
 
-function format (num) {
-  return new Intl.NumberFormat("en-US",{ style: "currency", currency: "USD",minimumFractionDigits: 2 }).format(num / 100);
-}
-function amountFor (perf) {
-  let thisAmount = 0
-  switch (playForPerf(perf).type) {
-    case "tragedy":
-      thisAmount = 40000;
-      if (perf.audience > 30) {
-        thisAmount += 1000 * (perf.audience - 30);
-      }
-      break;
-    case "comedy":
-      thisAmount = 30000;
-      if (perf.audience > 20) {
-        thisAmount += 10000 + 500 * (perf.audience - 20);
-      }
-      thisAmount += 300 * perf.audience;
-      break;
-    default:
-        throw new Error(`unknown type: ${playForPerf(perf).type}`);
-    }
-    return thisAmount
-}
-
-function volumeCreditsFor (perf) {
-  let result = Math.max(perf.audience - 30, 0);
-  if ("comedy" === playForPerf(perf).type) result += Math.floor(perf.audience / 5);
-  return result
-}
-
-function playForPerf (perf) {
-  return plays[perf.playID]
-}
-
-function totalVolumeCredits() {
-  let total = 0
-  for (let perf of invoice[0].performance) {
-    total += volumeCreditsFor(perf)
-  }
-  return total
-}
-
-function totalAmount() {
-  let total = 0
-  for (let perf of invoice[0].performance) {
-    total += amountFor(perf)
-  }
-  return total
-}
-function renderPlaintext (invoice) {
-  let result = `Statement for ${invoice.customer}\n`;
-  for (let perf of invoice.performance) {
-    result += ` ${playForPerf(perf).name}: ${format(amountFor(perf))} (${perf.audience} seats)\n`
-  }
-  result += `Amount owed is ${format(totalAmount())}\n`;
-  result += `You earned ${format(totalVolumeCredits())} credits\n`;
-  return result;
-}
 function statement () {
-  const invo = invoice[0]
-  renderPlaintext()
+  const statementData = createStatementData()  // 数据逻辑
+  const result = renderPlaintext(statementData) // UI渲染逻辑
+  console.log(result)
 }
 
-const result = statement()
-console.log(result)
+statement()
 
 /*
 Statement for BigCo
