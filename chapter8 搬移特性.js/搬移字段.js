@@ -1,4 +1,4 @@
-// 将 discountRate 字段从 Customer 类搬移到 CustomerContract 类
+// 1. 将 discountRate 字段从 Customer 类搬移到 CustomerContract 类
 
 class Customer {
   constructor(name, discountRate) {
@@ -41,7 +41,7 @@ class CustomerContract {
 
 }
 
-// 搬移字段到共享对象
+// 2. 搬移字段到共享对象
 // 不希望让每个账户自己维护一个利率字段, 将它搬移到 AccountType 中去
 class Account {
   constructor(number, type, interestRate) {
