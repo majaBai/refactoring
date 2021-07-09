@@ -17,7 +17,7 @@ function foundPerson(people) {
  }
  
  
-  function foundPerson2(people) {
+function foundPerson2(people) {
   const candidates = ["Don", "John", "Kent"];
   return people.find(p => candidates.includes(p)) || '';
  }
