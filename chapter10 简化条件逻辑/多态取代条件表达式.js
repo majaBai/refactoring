@@ -123,6 +123,7 @@ class NorwegianBlueParrot extends Bird {
 }
 
 // 上述继承体系是泛化的，而在实践中，我们常常想表达某个对象与另一个对象大体相似，但又有一些不同之处
+
 // 用多态处理变体逻辑
 
 function rating (voyage, history) {
@@ -219,16 +220,45 @@ class Rating {
         let result = 2
         if (this.voyage.zone === 'china') result += 1
         if (this.voyage.zone === 'east-indies') result += 1
-        if(this.voyage.zone === 'china' && this.hasChinaHistory){
-            result += 3
-            if(this.history.length > 10) result += 1
-            if(this.history.length > 12) result += 1
-            if(this.history.length > 18) result -= 1
-        } else {
-            if(this.history.length > 8) result += 1
-            if(this.voyage.length > 14) result -= 1
-        }
+        // if(this.voyage.zone === 'china' && this.hasChinaHistory){
+        //     result += 3
+        //     if(this.history.length > 10) result += 1
+        //     if(this.voyage.length > 12) result += 1
+        //     if(this.voyage.length > 18) result -= 1
+        // } else {
+        //     if(this.history.length > 8) result += 1
+        //     if(this.voyage.length > 14) result -= 1
+        // }
+        result += this.historyLengthFactor
+        result -= this.voyageLengthFactor
         return result
+    }
+
+    get voyageAndHistoryLengthFactor () {
+        let result = 0
+
+        // 关于 'china' && this.hasChinaHistory 的逻辑搬移到子类，只剩下 else 分支
+        // if(this.voyage.zone === 'china' && this.hasChinaHistory){
+        //     result += 3
+        //     if(this.history.length > 10) result += 1
+        //     if(this.voyage.length > 12) result += 1
+        //     if(this.voyage.length > 18) result -= 1
+        // } else {
+        //     if(this.history.length > 8) result += 1
+        //     if(this.voyage.length > 14) result -= 1
+        // }
+
+        // 将下面两个 if 独立成单独的方法 historyLengthFactor 和 historyLengthFactor
+        // 这样 voyageAndHistoryLengthFactor 可以整个抛弃
+        if(this.history.length > 8) result += 1
+        if(this.voyage.length > 14) result -= 1
+        return result
+    }
+    get historyLengthFactor () {
+        return (this.history.length > 8) ? 1 : 0
+    }
+    get voyageLengthFactor () {
+        return (this.voyage.length > 14) ? 1 : 0
     }
 
 }
@@ -237,6 +267,29 @@ class ExperiencedChinaRating extends Rating {
     get captainHistoryRisk () {
         const result = super.captainHistoryRisk - 2
         return Math.max(result, 0)
+    }
+    get voyageAndHistoryLengthFactor () {
+        let result = 0
+        //此处 加 3 的逻辑很突兀，让人搞不清楚为什么加 3
+        result += 3
+        if(this.history.length > 10) result += 1
+        if(this.voyage.length > 12) result += 1
+        if(this.voyage.length > 18) result -= 1
+        return result
+    }
+    get historyLengthFactor () {
+        return (this.history.length > 10) ? 1 : 0
+    }
+
+    get voyageLengthFactor () {
+        let result = 0
+        if(this.voyage.length > 12) result += 1
+        if(this.voyage.length > 18) result -= 1
+        return result
+    }
+
+    get voyageProfitFactor () {
+        return super.voyageLengthFactor + 3
     }
 }
 
